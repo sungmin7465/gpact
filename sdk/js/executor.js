@@ -447,7 +447,7 @@ export class Executor {
   constructor(cmgr, account, ms, eventFinalizedDelay) {
     this.cmgr = cmgr;
     this.account = account;
-    this.ms = ms;
+    this.ms = ms; // MsgStore
     this.delay = eventFinalizedDelay;
     this.gpacts = new Map();
   }
@@ -535,7 +535,7 @@ export class Executor {
       try {
         const gasPrice = await web3.eth.getGasPrice();
         const res = await gpact.methods
-          .start(transID, BigInt(10000), web3.utils.bytesToHex(root.encode()))
+          .start(transID, BigInt(10000), web3.utils.bytesToHex(root.encode())) // crossTxId, timeout(seconds), callgraph
           .send({
             from: this.account,
             gas: 10000000,
@@ -559,7 +559,7 @@ export class Executor {
       const eventID = getEventID(root.chainID, startEvent);
       for (let i = 0; i < 60; i++) {
         try {
-          const sig = await this.ms.getSignature(eventID);
+          const sig = await this.ms.getSignature(eventID); // get event from MsgStore Server by eventID
           if (sig != null) {
             startEventSig = sig;
             err = null;
